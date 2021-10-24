@@ -1,0 +1,117 @@
+---
+#tasks file for roles/feruza-nagios-server
+
+- name: Install epel-release
+  yum:
+    name: epel-release
+    state: latest
+
+- name: Installing packages
+  yum:
+    name: "{{ item }}"
+    state: latest
+  loop: "{{ package_list }}"  
+
+- name: Copy check_nrpe to a different dir
+  copy:
+    src: /usr/lib64/nagios/plugins/check_nrpe
+    dest: /usr/local/nagios/libexec/chrck_nrpe
+    mode: '4770'
+    remote_src: yes
+
+- name: Start and enable httpd
+  service:
+    name: httpd
+    state: started
+    enabled: yes
+
+- name: Download the archive
+  get_url:
+    url: "https://assets.nagios.com/downloads/nagioscore/releases/nagios-{{ nagios_version }}.tar.gz"
+    dest: /tmp
+
+- name: Untar the archive
+  unarchive:
+    src: "/tmp/nagios-{{ nagios_version }}.tar.gz"
+    dest: /tmp/
+    remote_src: yes
+
+- name: Compile Nagios
+  shell:
+    chdir: /tmp/nagios-{{ nagios_version }}
+    cmd: "{{ item }}"
+  loop: "{{ nagios_commands_list }}"  
+
+- name: Download archive with plugins
+  get_url:
+    url: "http://nagios-plugins.org/download/nagios-plugins-2.3.3.tar.gz"
+    dest: /tmp
+
+- name: Untar plugins archive
+  unarchive:
+    src: "/tmp/nagios-plugins-2.3.3.tar.gz"
+    dest: /tmp/
+    remote_src: yes
+
+- name: Compile plugins
+  shell:
+    chdir: /tmp/nagios-plugins-2.3.3
+    cmd: "{{ item }}"
+  loop: "{{ plugins_command_list }}"  
+
+- name: Uncomment cfg_dir line in config file
+  lineinfile:
+    path: /usr/local/nagios/etc/nagios.cfg
+    regexp: 'cfg_dir=/usr/local/nagios/etc/servers'
+    line: cfg_dir=/usr/local/nagios/etc/servers
+
+- name: Create an empty dir
+  file: 
+    path: "/usr/local/nagios/etc/servers"
+    state: directory
+
+- name: Edit email address in config file
+  lineinfile:
+    path: /usr/local/nagios/etc/objects/contacts.cfg
+    regexp: 'CHANGE THIS TO YOUR EMAIL ADDRESS'
+    line: "email {{ admin_email}}"
+
+- name: Add password for nagiosadmin user
+  community.general.htpasswd:
+    name: nagiosadmin
+    path: /usr/local/nagios/etc/htpasswd.users
+    state: present
+    password: "{{ admin_password }}"
+
+- name: Restart httpd service
+  service:
+    name: httpd
+    state: restarted
+
+- name: Start and enable nagios service
+  service:
+    name: nagios
+    state: started
+    enabled: yes
+
+- name: Add firewall rules
+  firewalld:
+    state: enabled
+    service: http
+    immediate: yes
+    permanent: yes
+
+- name: Add nrpe check to commands.cfg file
+  blockinfile:
+    path: /usr/local/nagios/etc/objects/commands.cfg
+    block: |
+      define command{
+        command_name        check_nrpe
+        command_line        $USER1$/check_nrpe -H $HOSTADDRESS$ -c $ARG1$
+      }
+
+- name: Restart nagios service
+  service:
+    name: nagios
+    state: restarted
+     
