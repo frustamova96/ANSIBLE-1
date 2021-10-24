@@ -77,13 +77,13 @@ frontend main
 #---------------------------------------------------------------------
 backend static
     balance     roundrobin
-    server  static 192.168.1.146:80 check   #load_balancer
+    server  static 192.168.37.21:80 check   #load_balancer
 
 #---------------------------------------------------------------------
 # round robin balancing between the various backends
 #---------------------------------------------------------------------
 backend app
     balance     roundrobin
-    server web001 192.168.1.136:80 check    #webserver001
-    server web002 192.168.1.236:80 check    #webserver002
-    server web003 192.168.1.33:80 check     #webserver003
+    server web001 192.168.37.18:80 check    #webserver001
+    server web002 192.168.37.19:80 check    #webserver002
+    server web003 192.168.37.20:80 check     #webserver003
