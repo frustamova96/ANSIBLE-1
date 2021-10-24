@@ -1,0 +1,4 @@
+---
+# vars file for mylb
+
+haproxy_port: 5000

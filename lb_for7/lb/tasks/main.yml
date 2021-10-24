@@ -1,0 +1,23 @@
+---
+# tasks file for mylb
+
+- name: "Install haproxy"
+  package:
+    name: "haproxy"
+    state: "present"
+
+- name: "Copy haproxy config file"
+  template:
+    src: "haproxy.cfg.j2"
+    dest: "/etc/haproxy/haproxy.cfg"
+  notify: "Restart haproxy server"
+
+- name: "Write a firewall rule for webserver"
+  firewalld:
+    port: "{{ haproxy_port }}/tcp"
+    state: "enabled"
+
+- name: "Start haproxy"
+  service:
+    name: "haproxy"
+    state: "started"
