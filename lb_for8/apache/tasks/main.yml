@@ -1,0 +1,27 @@
+---
+# tasks file for webserver
+
+- name: "Install apache webserver"
+  package:
+    name: "httpd"
+    state: "present"
+
+- name: "Copy files"
+  copy:
+    src: "Aincrad.jpg"
+    dest: "/var/www/html/"
+
+- name: "Copy template files"
+  template:
+    src: "index.html.j2"
+    dest: "/var/www/html/index.html"
+
+- name: "Write a firewall rule for webserver"
+  firewalld:
+    port: "80/tcp"
+    state: "enabled"
+
+- name: "Start apache webserver"
+  service:
+    name: "httpd"
+    state: "started"
