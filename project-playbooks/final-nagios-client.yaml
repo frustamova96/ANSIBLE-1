@@ -1,0 +1,6 @@
+---
+- name: Nagios Server project-roles/nagios-client
+  hosts: 192.168.1.150
+  become: yes
+  roles: 
+    - project-roles/nagios-client
