@@ -1,7 +1,0 @@
----
-- name: Creating php-mysql
-  hosts: all 
-  become: yes
-  roles:
-    - mysql-final-7
-    
