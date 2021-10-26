@@ -1,0 +1,26 @@
+---
+# vars file for /home/ansible/roles/oleg.mysql
+package_list:
+  - httpd
+  - mariadb-server
+  - php
+  - php-cli
+  - php-json
+  - php-mbstring
+  - php-pdo
+  - php-pecl-zip
+  - php-mysqlnd
+  - wget
+  - unzip
+
+service_list:
+  - httpd
+  - mariadb
+
+roots_passwd: password
+
+firewall_services:
+  - http
+  - mysql
+
+ip_range: "192.168.0.0/24"

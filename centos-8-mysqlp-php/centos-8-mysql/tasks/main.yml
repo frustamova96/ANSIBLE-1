@@ -1,0 +1,101 @@
+---
+- name: Install epel-release repo
+  dnf:
+    name: 
+      - epel-release
+      - python3
+    state: latest
+- name: enable epel-testing repo
+  dnf:
+    name: python3-mysqlclient
+    enablerepo: epel-testing
+    state: present
+    
+- name: Install required packages
+  dnf:
+    name: "{{ item }}"
+    state: latest
+  loop: "{{ package_list }}"
+
+- name: Start and enable required services
+  service:
+    name: "{{ item }}"
+    state: started
+    enabled: yes
+  loop: "{{ service_list }}"
+
+- name: Mysql Secure Installation
+  community.mysql.mysql_user:
+    name: root
+    password: "{{ roots_passwd }}"
+    #login_password: "{{ roots_passwd }}"
+- name: Copy identity file
+  template:
+    dest: /root/.my.cnf
+    src: my.cnf.j2
+
+- name: Changing to the root document in apache and downloading phpMyAdmin.
+  get_url:
+    url: https://files.phpmyadmin.net/phpMyAdmin/4.9.4/phpMyAdmin-4.9.4-all-languages.zip
+    dest: /var/www/html  
+
+- name: Untar phpMyAdmin
+  unarchive: 
+    src: "/var/www/html/phpMyAdmin-4.9.4-all-languages.zip"
+    dest: /var/www/html
+    remote_src: yes
+- name: rename the extracted directory to phpmyadmin
+  ansible.builtin.shell: 
+    cmd: mv phpMyAdmin-4.9.4-all-languages phpmyadmin
+    chdir: /var/www/html  
+ 
+- name: change the ownership of the phpmyadmin directory to the apache user
+  ansible.builtin.shell: 
+    cmd: chown -R apache:apache /var/www/html/phpmyadmin
+    chdir: /var/www/html  
+- name: rename the config.sample.inc.php
+  ansible.builtin.shell: 
+    cmd: mv config.sample.inc.php config.inc.php
+    chdir: /var/www/html/phpmyadmin 
+- name: edit the file and define your secure password
+  replace:
+    path: /var/www/html/phpmyadmin/config.inc.php 
+    regexp: ^\$cfg\[\'blowfish\_secret\'\]\s\=\s\'\'
+    replace: $cfg['blowfish_secret'] = 'password'
+    backup: yes
+
+
+- name: import the tables for phpMyAdmin
+  mysql_db:
+    name: all
+    state: import
+    target: /var/www/html/phpmyadmin/sql/create_tables.sql 
+   
+- name: create an Apache virtual host configuration file for phpMyAdmin
+  template:
+    dest: /etc/httpd/conf.d/phpmyadmin.conf
+    src: phpMyAdmin.conf.j2
+
+- name: Add services to the Firewall
+  firewalld:
+    state: enabled
+    service: "{{ item }}"
+    permanent: yes
+    immediate: yes
+  loop: "{{ firewall_services }}"
+
+- name: Restart httpd
+  service:
+    name: httpd
+    state: restarted
+
+- name: Copy database query file
+  copy:
+    src: /home/ansible/final-project/roles/centos-8-mysql/files/database.sql
+    dest: /root/database.sql
+
+- name: import database from /temp/ directory
+  mysql_db:
+    name: all
+    state: import
+    target: /root/database.sql
