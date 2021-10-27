@@ -30,14 +30,6 @@
     dest: /etc/httpd/conf.d/phpMyAdmin.conf
     src: phpMyAdmin.conf.j2
 
-- name: Add services to the Firewall
-  firewalld:
-    state: enabled
-    service: "{{ item }}"
-    permanent: yes
-    immediate: yes
-  loop: "{{ firewall_services }}"
-
 - name: Restart httpd
   service:
     name: httpd
@@ -50,7 +42,7 @@
 
 - name: Copy database query file
   copy:
-    src: /home/ansible/final-project/roles/mysql-final-7/files/database.sql
+    src: /home/ansible/ANSIBLE/centos-7-mysqlp-php/mysql-final-7/files/database.sql
     dest: /root/database.sql
 
 - name: import database from /root/ directory

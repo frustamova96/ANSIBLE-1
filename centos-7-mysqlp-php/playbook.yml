@@ -1,6 +1,6 @@
 ---
-- name: Creating dns master
-  hosts: all 
+- name: Creating mysql-phpadmin-centos-7
+  hosts: 192.168.37.17 
   become: yes
   roles:
     - mysql-final-7
