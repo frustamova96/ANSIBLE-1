@@ -34,29 +34,29 @@
     dest: /root/.my.cnf
     src: my.cnf.j2
 
-#- name: Changing to the root document in apache and downloading phpMyAdmin.
-#  get_url:
-#    url: https://files.phpmyadmin.net/phpMyAdmin/4.9.4/phpMyAdmin-4.9.4-all-languages.zip
-#    dest: /var/www/html  
+- name: Changing to the root document in apache and downloading phpMyAdmin.
+  get_url:
+    url: https://files.phpmyadmin.net/phpMyAdmin/4.9.4/phpMyAdmin-4.9.4-all-languages.zip
+    dest: /var/www/html  
 
-#- name: Untar phpMyAdmin
-#  unarchive: 
-#    src: "/var/www/html/phpMyAdmin-4.9.4-all-languages.zip"
-#    dest: /var/www/html
-#    remote_src: yes
-#- name: rename the extracted directory to phpmyadmin
-#  ansible.builtin.shell: 
-#    cmd: mv phpMyAdmin-4.9.4-all-languages phpmyadmin
-#    chdir: /var/www/html  
+- name: Untar phpMyAdmin
+  unarchive: 
+    src: "/var/www/html/phpMyAdmin-4.9.4-all-languages.zip"
+    dest: /var/www/html
+    remote_src: yes
+- name: rename the extracted directory to phpmyadmin
+  ansible.builtin.shell: 
+    cmd: mv phpMyAdmin-4.9.4-all-languages phpmyadmin
+    chdir: /var/www/html  
  
-#- name: change the ownership of the phpmyadmin directory to the apache user
-#  ansible.builtin.shell: 
-#    cmd: chown -R apache:apache /var/www/html/phpmyadmin
-#    chdir: /var/www/html  
-#- name: rename the config.sample.inc.php
-#  ansible.builtin.shell: 
-#    cmd: mv config.sample.inc.php config.inc.php
-#    chdir: /var/www/html/phpmyadmin 
+- name: change the ownership of the phpmyadmin directory to the apache user
+  ansible.builtin.shell: 
+    cmd: chown -R apache:apache /var/www/html/phpmyadmin
+    chdir: /var/www/html  
+- name: rename the config.sample.inc.php
+  ansible.builtin.shell: 
+    cmd: mv config.sample.inc.php config.inc.php
+    chdir: /var/www/html/phpmyadmin 
 - name: edit the file and define your secure password
   replace:
     path: /var/www/html/phpmyadmin/config.inc.php 
