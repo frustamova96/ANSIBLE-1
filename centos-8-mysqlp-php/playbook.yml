@@ -1,0 +1,6 @@
+---
+- name: Creating mysql-phpmyadmin-centos-8
+  hosts: 192.168.37.32 
+  become: yes
+  roles:
+    - centos-8-mysql
