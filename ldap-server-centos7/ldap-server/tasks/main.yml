@@ -1,0 +1,184 @@
+---
+# tasks file for ldap-server
+- name: Install epel-release repo
+  yum:
+    name: epel-release
+    state: present
+- name: Install first packages
+  yum:
+    name: 
+      - phpldapadmin
+      - pyOpenSSL
+      - openssl-devel
+      - libffi-devel
+      - openldap
+      - openldap-clients
+      - openldap-servers
+      - openssl
+      - httpd
+      - python-ldap
+    state: latest
+
+- name: Start and enable required services
+  service:
+    name: "{{ item }}"
+    state: started
+    enabled: yes
+  loop: "{{ service_list }}"
+
+- name: Generate the root password for ldap
+  shell: slappasswd -s password 
+  register: root_password
+
+- name: Copy the hdb.ldif configuration file 
+  template: src=hdb.ldif.j2 dest=/root/hdb.ldif
+
+- name: edit the file hdb.ldif and the password hash
+  replace:
+    path: /root/hdb.ldif
+    regexp: "^olcRootPW:"
+    replace: "olcRootPW: {{ root_password.stdout }}"
+    backup: yes
+
+- name: run command to apply changes from the file
+  ansible.builtin.shell: ldapmodify -Y EXTERNAL -H ldapi:/// -f hdb.ldif
+  args:
+    chdir: /root/
+
+- name: Copy the monitor.ldif configuration file 
+  template: src=monitor.ldif.j2 dest=/root/monitor.ldif
+
+- name: run command to apply changes from the file
+  ansible.builtin.shell: ldapmodify -Y EXTERNAL -H ldapi:/// -f monitor.ldif
+  args:
+    chdir: /root/  
+
+- name: Create the root key using the following command
+  ansible.builtin.shell: openssl genrsa -out CA.key 2048
+  args:
+    chdir: /etc/openldap/certs
+
+- name:  create the self-signed root certificate
+  shell: openssl req -new -x509 -new -subj '/C=US/ST=Virginia/L=Herndon/O=Ziyotek Institute/CN=Ziyotek Root CA/' -nodes -key CA.key -sha256 -days 1024 -out CA.crt
+  args:
+    chdir: /etc/openldap/certs
+
+- name: Create a private key for LDAP server
+  ansible.builtin.shell: openssl genrsa -out ldap.key 2048
+  args:
+    chdir: /etc/openldap/certs
+
+- name:  create a certificate signing request
+  shell: openssl req -new -subj '/C=US/ST=Virginia/L=Herndon/O=Ziyotek Institute/CN=Ziyotek Root CA/' -key ldap.key -out ldap.csr
+  args:
+    chdir: /etc/openldap/certs
+
+- name: sign a certificate signing request using the custom root CA
+  ansible.builtin.shell: openssl x509 -req -in ldap.csr -CA CA.crt -CAkey CA.key -CAcreateserial -out ldap.crt -days 1460 -sha256
+  args:
+    chdir: /etc/openldap/certs
+
+- name: create temporary file then ldapmodify will implement changes
+  template: src=key.ldif.j2 dest=/root/key.ldif
+
+- name: apply configurations for key.ldif file
+  ansible.builtin.shell: ldapmodify -Y EXTERNAL -H ldapi:/// -f key.ldif
+  args:
+    chdir: /root
+
+- name: Start apache, so clients can download CA certificate
+  service:
+    name: httpd
+    state: started
+    enabled: yes
+
+- name: copy the CA.crt file to root doc for apache
+  ansible.builtin.shell: cp /etc/openldap/certs/CA.crt /var/www/html/
+  
+- name: Restart slpad service
+  service:
+    name: slapd
+    state: restarted
+    enabled: yes
+
+- name: Create Base LDAP Structure in base.ldif
+  template: src=base.ldif.j2 dest=/root/base.ldif
+
+- name: Import Base Structure Using ldapadd
+  ansible.builtin.shell: ldapadd -x -D "cn=admin,dc=ziyotek3,dc=local" -w password -f base.ldif
+  args:
+    chdir: /root
+
+- name: Adding schemas
+  ansible.builtin.shell: ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/openldap/schema/cosine.ldif 
+  args:
+    chdir: /root
+- name: Adding schemas
+  ansible.builtin.shell: ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/openldap/schema/nis.ldif
+  args:
+    chdir: /root
+- name: Adding schemas
+  ansible.builtin.shell: ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/openldap/schema/inetorgperson.ldif
+  args:
+    chdir: /root
+
+- name: Create a LDIF file for New User
+  template: src=user.ldif.j2 dest=/root/user.ldif
+
+- name: Add a LDAP User using ldapadd
+  ansible.builtin.shell: ldapadd -x -w password -D "cn=admin,dc=ziyotek3,dc=local" -f user.ldif
+  args:
+    chdir: /root
+
+- name: Assign Password to LDAP User
+  ansible.builtin.shell: ldappasswd -s password -w password -D "cn=admin,dc=ziyotek3,dc=local" -x "uid=nima,ou=users,dc=ziyotek3,dc=local"
+  args:
+    chdir: /root
+
+- name: Create a LDIF file for New Group
+  template: src=group.ldif.j2 dest=/root/group.ldif
+
+- name: Add a LDAP Group using ldapadd
+  ansible.builtin.shell: ldapadd -x -w password -D "cn=admin,dc=ziyotek3,dc=local" -f group.ldif
+  args:
+    chdir: /root
+
+- name: Create a LDIF file for an existing Group
+  template: src=modify_user.ldif.j2 dest=/root/modify_user.ldif
+
+- name: Add a User to an existing Group using ldapmodify
+  ansible.builtin.shell: ldapmodify -x -w password -D "cn=admin,dc=ziyotek3,dc=local" -f modify_user.ldif
+  args:
+    chdir: /root
+
+- name:  Change dc=ziyotek,dc=local in the following lines
+  replace:
+    path: /etc/phpldapadmin/config.php
+    regexp: ^\/\/\s\$servers\-\>setValue\(\'server\'\,\'base\'\,array\(\'\'\)\)\;
+    replace: "$servers->setValue('server','base',array('dc=ziyotek3,dc=local'));"
+    backup: yes
+- name:  Change dc=ziyotek,dc=local in the following lines
+  replace:
+    path: /etc/phpldapadmin/config.php
+    regexp: ^\#\s\s\$servers\-\>setValue\(\'login\'\,\'bind\_id\'\,\'cn\=Manager\,dc\=example\,dc\=com\'\)\;
+    replace: "$servers->setValue('login','bind_id','cn=admin,dc=ziyotek3,dc=local');"
+    backup: yes
+- name:  Change dc=ziyotek,dc=local in the following lines
+  replace:
+    path: /etc/phpldapadmin/config.php
+    regexp: ^\/\/\s\$servers\-\>setValue\(\'login\'\,\'attr\'\,\'dn\'\)\;
+    replace: "$servers->setValue('login','attr','dn');"
+    backup: yes
+- name:  Change dc=ziyotek,dc=local in the following lines
+  replace:
+    path: /etc/phpldapadmin/config.php
+    regexp: ^\$servers\-\>setValue\(\'login\'\,\'attr\'\,\'uid\'\)\;
+    replace: "// $servers->setValue('login','attr','uid');"
+    backup: yes
+
+- name: Start and enable required services
+  service:
+    name: httpd
+    state: restarted
+    enabled: yes
+  
