@@ -15,7 +15,7 @@
   lineinfile:
     path: /etc/nagios/nrpe.cfg
     regexp: 'allowed_hosts'
-    line: allowed_hosts=127.0.0.1,192.168.1.190
+    line: allowed_hosts=127.0.0.1,192.168.37.22
 
 - name: Add check commands
   lineinfile:
@@ -39,8 +39,8 @@
     permanent: yes
     immediate: yes
 
-- name: Start and enable firewalld
-  service:
-    name: firewalld
-    state: restarted
-    enabled: yes
+# - name: Start and enable firewalld
+#   service:
+#     name: firewalld
+#     state: restarted
+#     enabled: yes

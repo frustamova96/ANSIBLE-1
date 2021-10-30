@@ -12,13 +12,6 @@
     state: latest
   loop: "{{ package_list }}"  
 
-- name: Copy check_nrpe to a different dir
-  copy:
-    src: /usr/lib64/nagios/plugins/check_nrpe
-    dest: /usr/local/nagios/libexec/chrck_nrpe
-    mode: '4770'
-    remote_src: yes
-
 - name: Start and enable httpd
   service:
     name: httpd
@@ -108,11 +101,11 @@
     permanent: yes
     immediate: yes
 
-- name:
-  service:
-    name: firewalld
-    state: restarted
-    enabled: yes        
+# - name:
+#   service:
+#     name: firewalld
+#     state: restarted
+#     enabled: yes        
 
 - name: Add nrpe check to commands.cfg file
   blockinfile:
@@ -128,13 +121,15 @@
     name: nagios
     state: restarted
 
-- name: Copy plugin to a nagios/libexec/ dir
+- name: Copy check_nrpe to a different dir
   copy:
-    src: /usr/lib64/nagios/plugins/check_*
-    dest: /usr/local/nagios/libexec
-    remote_src: yes    
+    src: /usr/lib64/nagios/plugins/check_nrpe
+    dest: /usr/local/nagios/libexec/check_nrpe
+    mode: '4770'
+    remote_src: yes
 
-- name: Add nagios server to allowed hosts list
+
+- name: change refresh time
   lineinfile:
     path: /usr/local/nagios/etc/cgi.cfg
     regexp: 'refresh_rate'

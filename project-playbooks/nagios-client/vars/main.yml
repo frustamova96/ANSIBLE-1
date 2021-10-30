@@ -3,4 +3,4 @@
 check_commands:
 - "command[check_disk]=/usr/lib64/nagios/plugins/check_disk -w 20% -c 10% -p /"
 - "command[check_swap]=/usr/lib64/nagios/plugins/check_swap -w 20% -c 10%"
-- "command[check_ntp_time]=/usr/lib64/nagios/plugins/check_ntp_time -H 192.168.1.150 -w 0.5 -c 1"
+- "command[check_ntp_time]=/usr/lib64/nagios/plugins/check_ntp_time -H (NTP server ip) -w 0.5 -c 1"

@@ -1,6 +1,6 @@
 ---
-- name: Nagios Server project-roles/feruza-nagios-server
-  hosts: 192.168.1.190
+- name: Nagios Server /home/ansible.ANSIBLE/project-playbooks/feruza-nagios-server
+  hosts: 192.168.37.22
   become: yes
   roles: 
-    - project-roles/feruza-nagios-server
+    - /home/ansible/ANSIBLE/project-playbooks/feruza-nagios-server
