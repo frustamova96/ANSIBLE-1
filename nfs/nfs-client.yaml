@@ -1,0 +1,6 @@
+---
+- name: NFS Client 
+  hosts: all
+  become: yes
+  roles: 
+    - /home/ansible/nfs/nfs-client

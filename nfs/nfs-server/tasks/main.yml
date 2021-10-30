@@ -1,0 +1,74 @@
+---
+# tasks file for nfs-server
+- name: Install nfs utils
+  yum:
+    name: "{{ item }}"
+    state: latest
+  loop: ["nfs-utils"] 
+
+- name: start and enable rpcbind
+  service:
+    name: rpcbind
+    state: started
+    enabled: yes
+
+- name: start and enable nfs-server
+  service:
+    name: nfs-server
+    state: started
+    enabled: yes
+
+- name: start and enable nfs-lock
+  service:
+    name: nfs-lock
+    state: started
+    enabled: yes
+
+
+- name: start and enable nfs-idmap
+  service:
+    name: nfs-idmap
+    state: started
+    enabled: yes   
+
+- name: Create a shared dir and permissions
+  file: 
+    path: "/share"
+    state: directory     
+    owner: nobody
+    group: nobody
+    mode: 755
+
+- name:   Edit config file
+  lineinfile:
+    path: /etc/exports  
+    line: /share *(rw,sync)
+
+- name: Add firewall-services
+  firewalld:
+    service: "{{ item }}" 
+    state: enabled
+    immediate: yes
+    permanent: yes
+  loop: ["mountd", "rpc-bind", "nfs" ]
+
+- name: Restart firewall
+  service:
+    name: firewalld
+    state: restarted 
+    enabled: yes
+
+- name: restart nfs-server
+  service:
+    name: nfs-server
+    state: restarted
+    enabled: yes
+
+###################################AUTOFS
+
+- name: Install autofs
+  yum:
+    name: autofs
+    state: latest
+
+     
