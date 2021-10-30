@@ -1,0 +1,7 @@
+---
+# vars file for ldap-server
+service_list:
+  - slapd
+
+openldap_server_rootpw:
+  - password  
