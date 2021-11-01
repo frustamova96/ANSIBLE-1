@@ -1,9 +1,9 @@
-- hosts: 192.168.37.18,192.168.37.19,192.168.37.20,192.168.37.21
+- hosts: all
   become: yes
   roles:
     - apache
 
-- hosts: 192.168.37.21
+- hosts: lb
   become: yes
   roles:
     - lb
