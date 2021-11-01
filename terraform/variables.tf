@@ -1,0 +1,7 @@
+variable "ssh_key" {
+  default = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDchv3beO+zVMdzY1YmSW8stIvk5rmmt2rCp+nn9SKNQ1BcpP1E8k5cvw+ehY8RCMUaIQkE1O3aB2Jq+DKQnQFRNaFp8Y0sZUJJFkgESMRjxNiWr1uExg//Cng9inZe7eWMRRuMLH6zigM+a4ZYZOtrHTl1MbIpOrKP6oqT1qk4tHpx8XBhOrsok/N3fqekEqw9T3B+bB7EmgBcddX5ER0/jW3AtVXtxu2San0LlrAkRHQNpAnYSEBAba7UturHf2DGdhyZaPNuusno1gvc0n+DzCt9AxEyUhyz4/WM0NuhwN4eL+5sQtn5hbQdBquvnKWGuAhKWXqB/sNvwNJ5VJbB root@fp-terraform.ziyotek.local"
+
+}
+
+
+
