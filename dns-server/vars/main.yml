@@ -1,0 +1,27 @@
+---
+# vars file for DNS-server
+roots_passwd: password
+
+package_list: 
+  - httpd 
+  - php 
+  - php-devel
+  - php-gd 
+  - php-imap
+  - php-ldap
+  - php-mysql
+  - php-odbc
+  - php-pear
+  - php-xml
+  - php-xmlrpc
+  - php-mbstring
+  - php-mcrypt
+  - php-mhash
+  - gettext
+  - php-pear-DB
+  - php-pear-MDB2-Driver-mysqli
+
+firewall_services:
+  - dns
+  - http
+  - https

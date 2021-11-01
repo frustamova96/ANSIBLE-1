@@ -1,0 +1,110 @@
+---
+# tasks file for dns-server
+- name: Install epel-release repo
+  yum:
+    name: 
+      - epel-release
+      - http://rpms.remirepo.net/enterprise/remi-release-7.rpm
+      - yum-utils 
+      - wget
+      - MySQL-python
+    state: latest 
+- name: Enable remo-php72 repo
+  yum:
+    #name: remi-php72
+    enablerepo: remi-php72
+    state: present
+
+- name: Install database
+  yum: 
+    name:
+      - mysql
+      - mariadb
+      - mariadb-server
+- name: Start and enable mariadb
+  service:
+    name: mariadb
+    state: started
+    enabled: yes
+  
+- name: Mysql Secure Installation
+  community.mysql.mysql_user:
+    name: root
+    password: "{{ roots_passwd }}"
+    #login_password: "{{ roots_passwd }}"
+    
+- name: Copy identity file
+  template:
+    dest: /root/.my.cnf
+    src: my.cnf.j2  
+
+- name: Copy database query file
+  copy:
+    src: dns-database.sql
+    dest: /root/dns-database.sql
+
+- name: import database for powerdns
+  mysql_db:
+    name: all
+    state: import
+    target: /root/dns-database.sql
+- name: Install database
+  yum: 
+    name:
+      - pdns
+      - pdns-backend-mysql
+      - bind-utils
+
+- name: Reconfigure PowerDNS to use our mariaDB database
+  ansible.builtin.lineinfile:
+    path: /etc/pdns/pdns.conf
+    regexp: '^launch\=bind'
+    line: '#launch=bind'
+- name: Reconfigure PowerDNS to use our mariaDB database
+  lineinfile:
+    path: /etc/pdns/pdns.conf
+    state: present
+    line: "{{ item }}"
+  with_items:
+  - 'launch=gmysql'
+  - 'gmysql-host=localhost'
+  - 'gmysql-user=pdns'
+  - 'gmysql-password=pdnspassword'
+  - 'gmysql-dbname=powerdns'
+- name: Start and enable pdns
+  service:
+    name: pdns
+    state: started
+    enabled: yes
+- name:  install LAMP stack and some additional packages
+  yum: 
+    name: "{{ item }}"
+    state: latest  
+  loop: "{{ package_list }}"
+- name: Start and enable httpd
+  service:
+    name: httpd
+    state: started
+    enabled: yes
+- name: Add services to the Firewall
+  firewalld:
+    state: enabled
+    service: "{{ item }}"
+    permanent: yes
+    immediate: yes
+  loop: "{{ firewall_services }}"
+
+
+- name: Changing to the root document in apache and downloading PowerAdmin UI
+  get_url:
+    url: http://downloads.sourceforge.net/project/poweradmin/poweradmin-2.1.7.tgz
+    dest: /var/www/html 
+- name: Untar PowerAdmin UI
+  unarchive: 
+    src: "/var/www/html/poweradmin-2.1.7.tgz"
+    dest: /var/www/html
+    remote_src: yes
+- name: rename the extracted directory to poweradmin
+  ansible.builtin.shell: 
+    cmd: mv poweradmin-2.1.7 poweradmin
+    chdir: /var/www/html
