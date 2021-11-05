@@ -44,19 +44,19 @@
     path: /etc/exports  
     line: /share *(rw,sync)
 
-- name: Add firewall-services
-  firewalld:
-    service: "{{ item }}" 
-    state: enabled
-    immediate: yes
-    permanent: yes
-  loop: ["mountd", "rpc-bind", "nfs" ]
+# - name: Add firewall-services
+#   firewalld:
+#     service: "{{ item }}" 
+#     state: enabled
+#     immediate: yes
+#     permanent: yes
+#   loop: ["mountd", "rpc-bind", "nfs" ]
 
-- name: Restart firewall
-  service:
-    name: firewalld
-    state: restarted 
-    enabled: yes
+# - name: Restart firewall
+#   service:
+#     name: firewalld
+#     state: restarted 
+#     enabled: yes
 
 - name: restart nfs-server
   service:

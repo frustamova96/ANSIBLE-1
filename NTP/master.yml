@@ -1,7 +1,7 @@
 ---
 - name: install initial packages on all boxes
   hosts: servers
-  remote_user: ansible 
+  #remote_user: ansible 
   become: yes
   
   tasks:
@@ -13,16 +13,14 @@
 
     - name: configure chrony
       template:
-        src: /home/ansible/NTP/chrony.server.j2
+        src: /home/ansible/ANSIBLE/NTP/chrony.server.j2
         dest: /etc/chrony.conf
   
 
-    - name: start chronyd
+    - name: start and anable chronyd
       service:
         name: chronyd
         state: started
- 
-    - name: restart service
-      service:
-        name: chronyd
-        state: restarted
+        enabled: yes
+
+

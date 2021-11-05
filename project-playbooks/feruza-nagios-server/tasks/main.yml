@@ -87,19 +87,19 @@
     state: started
     enabled: yes
 
-- name: Add firewall rules
-  firewalld:
-    state: enabled
-    service: http
-    immediate: yes
-    permanent: yes
+# - name: Add firewall rules
+#   firewalld:
+#     state: enabled
+#     service: http
+#     immediate: yes
+#     permanent: yes
 
-- name: Add firewall rules
-  firewalld:
-    state: enabled
-    port: 5666/tcp
-    permanent: yes
-    immediate: yes
+# - name: Add firewall rules
+#   firewalld:
+#     state: enabled
+#     port: 5666/tcp
+#     permanent: yes
+#     immediate: yes
 
 # - name:
 #   service:

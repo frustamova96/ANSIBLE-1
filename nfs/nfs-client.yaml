@@ -3,4 +3,4 @@
   hosts: all
   become: yes
   roles: 
-    - /home/ansible/nfs/nfs-client
+    - /home/ansible/ANSIBLE/nfs/nfs-client

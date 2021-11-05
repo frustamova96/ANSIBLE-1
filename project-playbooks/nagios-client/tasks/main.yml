@@ -1,15 +1,15 @@
 ---
 # tasks file for project-roles/nagios-client
-- name: Installing epel-release
-  yum:
-    name: epel-release
-    state: latest
+# - name: Installing epel-release
+#   yum:
+#     name: epel-release
+#     state: latest
 
-- name: Install Nrpe and plugins
-  yum:
-    name: "{{ item }}"
-    state: latest
-  loop: ["nrpe", "nagios-plugins-all"]  
+# - name: Install Nrpe and plugins
+#   yum:
+#     name: "{{ item }}"
+#     state: latest
+#   loop: ["nrpe", "nagios-plugins-all"]  
 
 - name: Add nagios server to allowed hosts list
   lineinfile:
@@ -32,12 +32,12 @@
     enabled: yes
     
 
-- name: Add firewall rules
-  firewalld:
-    state: enabled
-    port: 5666/tcp
-    permanent: yes
-    immediate: yes
+# - name: Add firewall rules
+#   firewalld:
+#     state: enabled
+#     port: 5666/tcp
+#     permanent: yes
+#     immediate: yes
 
 # - name: Start and enable firewalld
 #   service:

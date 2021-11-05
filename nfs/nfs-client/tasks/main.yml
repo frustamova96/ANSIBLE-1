@@ -1,21 +1,23 @@
 ---
 # tasks file for nfs-client
-- name: Install nfs utils
-  yum:
-    name: nfs-utils
-    state: latest
+# - name: Install nfs utils
+#   yum:
+#     name: nfs-utils
+#     state: latest
 
-- name: Create a shared dir
-  file: 
-    path: "/clientshare"
-    state: directory      
+# - name: Create a shared dir
+#   file: 
+#     path: "/clientshare"
+#     state: directory      
 
-- name: mount /share in /etc/fstab
-  lineinfile: 
-    path: /etc/fstab
-    line:  192.168.1.191:/share /clientshare nfs defaults 0 0
+# - name: mount /share in /etc/fstab
+#   lineinfile: 
+#     path: /etc/fstab
+#     line:  192.168.37.15:/share /clientshare nfs defaults 0 0
 
-- name: mounting the dir
-  shell:
-  args:
-    cmd: mount -a
+
+# - name: mounting the dir
+#   shell:
+#   args:
+#     cmd: mount -a
+

@@ -1,6 +1,6 @@
 ---
 - name: Creating dns master
-  hosts: all 
+  hosts: 192.168.37.23 
   become: yes
   roles:
     - ldap-server

@@ -1,14 +1,14 @@
-[servers]
+[all:vars]
+ansible_user='ansible' #set ssh user accordingly
+ansible_become=yes
+ansible_become_method=sudo
+
+[all]
 192.168.37.11
 192.168.37.12
-
-
-
-[clients]
 192.168.37.13
 192.168.37.14
 192.168.37.15
-192.168.37.16
 192.168.37.17
 192.168.37.18
 192.168.37.19
@@ -25,8 +25,3 @@
 192.168.37.30
 192.168.37.31
 192.168.37.32
-
-[nsworkers]
-192.168.37.33
-192.168.37.34
-
