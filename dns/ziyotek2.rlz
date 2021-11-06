@@ -1,0 +1,45 @@
+$TTL 1D
+@       IN SOA  ziyotek2.local. root.ziyotek2.local. (
+                                        10066    ; serial
+                                        1D      ; refresh
+                                        1H      ; retry
+                                        1W      ; expire
+                                        3H )    ; minimum
+
+;Name Server Information
+
+        IN      NS      prdx-nsmaster12.ziyotek2.local.
+        IN      NS      prdx-nsworker12.ziyotek2.local.
+        IN      NS      prdx-nsworker22.ziyotek2.local.
+
+
+
+;Name Server PTR records
+
+13	IN	PTR	prdx-nsmaster12.ziyotek2.local.
+14      IN      PTR     prdx-nsworker12.ziyotek2.local.
+15      IN      PTR     prdx-nsworker22.ziyotek2.local.
+
+
+;Hosts in Domain
+11      IN      PTR	prdx-ntp12.ziyotek2.local.
+12      IN	PTR     prdx-ntp22.ziyotek2.local.
+16      IN	PTR     prdx-ftp12.ziyotek2.local.
+17      IN      PTR     prdx-nfs12.ziyotek2.local.
+18      IN      PTR     prdx-db126.ziyotek2.local.
+19      IN      PTR     prdx-db127.ziyotek2.local.
+20      IN      PTR     prdx-webserver126.ziyotek2.local.
+21      IN      PTR     prdx-webserver127.ziyotek2.local.
+22      IN      PTR     prdx-webserver226.ziyotek2.local.
+23      IN      PTR     prdx-webserver227.ziyotek2.local.
+24      IN      PTR     prdx-webserver326.ziyotek2.local.
+25      IN      PTR     prdx-webserver327.ziyotek2.local.
+26      IN      PTR     prdx-haproxy126.ziyotek2.local.
+27      IN      PTR     prdx-haproxy127.ziyotek2.local.
+28      IN      PTR     prdx-nagios12.ziyotek.local.
+29      IN      PTR     prdx-ldap12.ziyotek2.local.
+30      IN      PTR     prdx-ansible12.ziyotek2.local.
+31      IN      PTR     prdx-jenkins12.ziyotek2.local.
+32      IN      PTR     prdx-kubem12.ziyotek2.local.
+33      IN      PTR     prdx-kubew12.ziyotek2.local.
+34      IN      PTR     prdx-kubew22.ziyotek2.local.

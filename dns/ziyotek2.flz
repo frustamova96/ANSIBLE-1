@@ -1,0 +1,73 @@
+$TTL 1D
+@       IN SOA  prdx-nsmaster12.ziyotek2.local.  root.prdx-nsmaster12.ziyotek2.local. (
+                                        100456    ; serial
+                                        3600    ; refresh
+                                        1800    ; retry
+                                        1W      ; expire
+                                        3H )    ; minimum
+
+
+;Name Server Information
+        IN      NS      prdx-nsmaster12.ziyotek2.local.
+        IN      NS      prdx-nsworker12.ziyotek2.local.
+        IN      NS      prdx-nsworker22.ziyotek2.local.
+
+
+;A-record HostName to IP Address
+prdx-nsmaster12         IN      A       192.168.34.13 
+prdx-nsworker12         IN     	A       192.168.34.14
+prdx-nsworker22         IN      A       192.168.34.15
+
+
+;Hosts in this Domain
+prdx-ntp12		IN	A	192.168.34.11   
+prdx-ntp22		IN	A	192.168.34.12
+prdx-ftp12	 	IN	A	192.168.34.16
+prdx-nfs12 		IN 	A	192.168.34.17
+prdx-db126 		IN	A	192.168.34.18
+prdx-db127		IN 	A	192.168.34.19
+prdx-webserver126 	IN	A	192.168.34.20
+prdx-webserver127 	IN	A	192.168.34.21
+prdx-webserver226 	IN	A	192.168.34.22
+prdx-webserver227 	IN	A	192.168.34.23
+prdx-webserver326 	IN	A	192.168.34.24
+prdx-webserver327 	IN	A	192.168.34.25
+prdx-haproxy126 	IN	A	192.168.34.26
+prdx-haproxy127 	IN	A	192.168.34.27	
+prdx-nagios12 		IN	A	192.168.34.28	
+prdx-ldap12 		IN	A	192.168.34.29
+prdx-ansible12		IN	A	192.168.34.30
+prdx-jenkins12		IN	A	192.168.34.31
+prdx-kubem12		IN	A	192.168.34.32	
+prdx-kubew12		IN	A	192.168.34.33
+prdx-kubew22 		IN	A	192.168.34.34
+
+
+;CNAME record
+nsmaster12	IN	CNAME	prdx-nsmaster12.ziyotek2.local.
+nsworker12      IN      CNAME   prdx-nsworker12.ziyotek2.local.
+nsworker22      IN      CNAME   prdx-nsworker22.ziyotek2.local.
+
+
+ntp12		IN	CNAME	prdx-ntp12.ziyotek2.local.
+ntp22		IN	CNAME	prdx-ntp22.ziyotek2.local.
+ftp12		IN	CNAME	prdx-ftp12.ziyotek2.local. 
+nfs12		IN	CNAME	prdx-nfs12.ziyotek2.local.
+db126		IN	CNAME	prdx-db126.ziyotek2.local. 
+db127		IN	CNAME	prdx-db127.ziyotek2.local.
+web126		IN	CNAME	prdx-webserver126.ziyotek2.local.
+web127		IN	CNAME	prdx-webserver127.ziyotek2.local.
+web226		IN	CNAME	prdx-webserver226.ziyotek2.local.
+web227		IN	CNAME	prdx-webserver227.ziyotek2.local.
+web326		IN	CNAME	prdx-webserver326.ziyotek2.local.
+web327		IN	CNAME	prdx-webserver327.ziyotek2.local.
+lb126		IN	CNAME	prdx-haproxy126.ziyotek2.local.
+lb127		IN	CNAME	prdx-haproxy127.ziyotek2.local.
+nagios12	IN	CNAME	prdx-nagios12.ziyotek.local.
+ldap12		IN	CNAME	prdx-ldap12.ziyotek2.local.
+ansible12	IN	CNAME 	prdx-ansible12.ziyotek2.local.
+jenkins12	IN	CNAME	prdx-jenkins12.ziyotek2.local.
+kubem12		IN	CNAME	prdx-kubem12.ziyotek2.local.
+kubew12		IN	CNAME	prdx-kubew12.ziyotek2.local.
+kubew22		IN	CNAME	prdx-kubew22.ziyotek2.local.
+
