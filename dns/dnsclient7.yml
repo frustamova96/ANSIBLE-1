@@ -1,0 +1,22 @@
+---
+- name: Setup dns client
+  hosts: all
+  remote_user: ansible
+  become: yes
+  tasks:
+    - name: Add IPv4 DNS server addresses
+      nmcli:
+        conn_name: ens192        
+        type: ethernet
+        dns4:
+        - 192.168.34.13
+        - 192.168.34.14
+        - 192.168.34.15
+        dns4_search:
+        - ziyotek2.local  
+        state: present
+    - name: restart network
+      service:
+        name: network
+        state: restarted
+
